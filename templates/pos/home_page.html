@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Dashboard</title>
+{% endblock title %}
+
+{% block breadcrumb_heading %}
+Dashboard
+{% endblock breadcrumb_heading %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="/">Dashboard</a>
+</li>
+{% endblock breadcrumb %}
+
+{% block page_content %}
+
+<div class="row mb-4">
+    <div class="col">
+        <button data-toggle="modal" data-target="#bulk_upload_client"
+            class="btn btn-rounded btn-outline-success float-right mx-2">
+            <i class="mdi mdi-file"></i> BULK UPLOAD Order
+        </button>
+    </div>
+
+    <!--Bulk upload client button modal content -->
+    <div id="bulk_upload_client" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3 class="modal-title font-weight-bold" id="vcenter">
+                        Bulk Upload your client</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body pt-0">
+
+                    <div class="card mb-0">
+                        <div class="card-body my-0 pb-0">
+                            <h4 class="card-title text-muted mt-0 pt-0">Import your File (Accepted .CSV format only)
+                            </h4>
+                            <form action="{% url 'pos:bulk_order_upload' %}" enctype="multipart/form-data"
+                                method="POST">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <input type="file" name="csv_order_file" id="csv_client_file"
+                                        accept="text/plain, .csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                        class="form-control-file">
+                                    <a href="#">
+                                        <span class="badge badge-default badge-success form-text text-white float-left"
+                                            id="download_sample_csv">Download Sample</span>
+                                    </a>
+                                </div>
+
+                                <div class="modal-footer mt-4">
+                                    <button type="button" class="btn btn-warning waves-effect float-left"
+                                        data-dismiss="modal">Cancel</button>
+                                    <button type="submit"
+                                        class="btn btn-success waves-effect float-right">Upload</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.modal content -->
+</div>
+
+
+<div class="row">
+    <div class="col-8 mx-auto">
+        <div class="card w-100">
+            <a href="{% url 'pos:items_pos' %}" class="btn btn-rounded btn-outline-primary">
+                <i class="mdi mdi-circle"></i> Load Data
+            </a>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+{% endblock page_content %}

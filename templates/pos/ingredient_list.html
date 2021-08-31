@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Ingredients</title>
+{% endblock title %}
+
+{% block breadcrumb_heading %}
+Ingredients
+{% endblock breadcrumb_heading %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="#">Ingredients</a>
+</li>
+{% endblock breadcrumb %}
+
+{% block page_content %}
+<div class="row mb-4">
+    <div class="col">
+        <button data-toggle="modal" data-target="#add_new_ingredient"
+            class="btn btn-rounded btn-outline-success float-right mx-2">
+            <i class="mdi mdi-plus-circle-outline"></i> Add new Ingredient
+        </button>
+    </div>
+
+    <!--Add new ingredient button modal content -->
+    <div id="add_new_ingredient" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3 class="modal-title font-weight-bold" id="vcenter">
+                        Add New Ingredient</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="" method="post">
+
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                <label for="id_ingredient">Ingredient</label>
+                                <!-- <input type="text" name="ingredient_name" class="form-control" id="ingredient"> -->
+                                {{form.ingredient_name}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 form-group">
+                                <label for="id_measuring_unit" class="control-label">Unit</label>
+                                {{form.measuring_unit}}
+                                <!-- <input type="text" name="quantity" class="form-control" id="quantity_0" required /> -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button class="btn btn-success waves-effect float-right mx-2" type="submit">
+                                    <i class="mdi mdi-content-save-all"></i> Save</button>
+                                <button class="btn btn-warning waves-effect float-right mx-2" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.modal content -->
+</div>
+
+
+
+
+<div class="row">
+    <div class="col-8">
+        <div class="card overflow-auto">
+            <div class="card-body flex-nowrap">
+                {% if ingredients %}
+                <table class="table table-striped" id="ingredient_item_table_config">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 8rem;">Ingredient Name</th>
+                            <th style="min-width: 5rem;">Unit</th>
+                            <th style="min-width: 5rem;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ingredientItem in ingredients %}
+                        <tr>
+                            <td style="min-width: 8rem;">{{ingredientItem.ingredient_name}}</td>
+                            <td style="min-width: 5rem;">{{ingredientItem.measuring_unit}}</td>
+                            <td style="min-width: 5rem;">
+                                <span>
+                                    <i class="fas fa-edit mx-2 text-warning" data-toggle="modal"
+                                        data-target="#update_ingredient" onclick="updateIngredientItem(this)"
+                                        data-ingredient_pk="{{ingredientItem.id}}" style="cursor: pointer;"></i>
+                                </span>
+
+                                <span>
+                                    <i class="mdi mdi-delete-forever mx-2 text-danger" data-toggle="modal"
+                                        data-target="#delete_ingredient" onclick="deleteIngredientItem(this)"
+                                        data-ingredient_pk="{{ingredientItem.id}}" style="cursor: pointer;"></i>
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+                {% else %}
+                <h2 class="text-center">No Ingredients to display.</h2>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--Add Update ingredient button modal content -->
+<div id="update_ingredient" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h3 class="modal-title font-weight-bold" id="vcenter">
+                    Update Ingredient</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body" id="update_ingredient_modal_body">
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- /.modal content -->
+
+
+<!-- Delete ingredient button modal content -->
+<div id="delete_ingredient" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h3 class="modal-title font-weight-bold" id="vcenter" style="color: rgb(207, 33, 33);">
+                    Warning!!</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <p> Are you sure you want to delete this ingredient?</p>
+            </div>
+
+            <div class="modal-footer" id="delete_ingredient_modal_footer">
+                <!-- Append footer button here -->
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal content -->
+
+
+{% endblock page_content %}
+
+{% block custom_js %}
+<script>
+    function updateIngredientItem(item) {
+        // console.log(`item>>>>>>>`, item);
+
+        const ingredientId = $(item).data('ingredient_pk');
+
+        const url = `/ingredient-details/${ingredientId}/`;
+        fetch(url, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'aplication/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        }).then(response => {
+            // $('#cover-spin').hide(0);
+            // if (response.redirected) {
+            //     window.location.href = response.url;
+            //     return
+            // }
+            return response.json()
+        }).then(data => {
+            // console.log(`data: `, data['ingredient_data'][0]);
+            if (!data['Success']) {
+                alert("Something went wrong.")
+                return
+            }
+
+            const ingredientModalBody = $('#update_ingredient_modal_body');
+            ingredientModalBody.children().remove();
+            ingredientModalBody.append(`
+                <form action="/ingredient-details/${ingredientId}/" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            <label for="ingredient">Ingredient</label>
+                            <input type="text" value="${data['ingredient_data'][0].fields.ingredient_name}" name="ingredient_name" class="form-control" id="ingredient">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            <label for="measuring_unit" class="control-label">Unit</label>
+                            <input type="text" value="${data['ingredient_data'][0].fields.measuring_unit}" name="measuring_unit" class="form-control" id="measuring_unit" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-success waves-effect float-right mx-2" type="submit">
+                                <i class="mdi mdi-content-save-all"></i> Save</button>
+                            <button class="btn btn-warning waves-effect float-right mx-2" data-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            `);
+        });
+    }
+</script>
+
+
+<!-- Delete Ingredient functioins -->
+<script>
+    function deleteIngredientItem(item) {
+        ingredient_pk = $(item).data('ingredient_pk');
+        console.log(`ingredient_pk`, ingredient_pk)
+        let delete_ingredient_footer = $('#delete_ingredient_modal_footer');
+        delete_ingredient_footer.children().remove();
+
+        delete_ingredient_footer.append(`
+            <button type="button" class="btn btn-warning waves-effect float-left"
+                data-dismiss="modal">Cancel</button>
+            <form action="/ingredient-details/${ingredient_pk}/?is_del=1/" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger waves-effect float-right">Confirm</button>
+            </form>
+        `);
+    }
+</script>
+{% endblock custom_js %}

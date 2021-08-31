@@ -1,0 +1,218 @@
+<div class="row mb-4">
+    <div class="col">
+        <button data-toggle="modal" data-target="#add_new_item"
+            class="btn btn-rounded btn-outline-success float-right mx-2">
+            <i class="mdi mdi-plus-circle-outline"></i> Add new Item
+        </button>
+    </div>
+
+    <!-- Add new menu and it's Ingredients  -->
+    <!--Add new Menu Item button modal content -->
+    <div id="add_new_item" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h3 class="modal-title font-weight-bold" id="vcenter">
+                        Add New Item</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="card pb-0">
+                        <div class="card-body mb-0 pb-0" id="add_new_food_item_body">
+
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <label for="food_item_name">Food Item name</label>
+                                    <input type="text" name="item_name" id="food_item_name" class="form-control"
+                                        required>
+                                </div>
+                                <div class="col-4">
+                                    <label for="food_item_number">Item Number(Unique*)</label>
+                                    <input type="text" name="item_number" id="food_item_number" class="form-control"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="row my-2">
+                                <div class="col-6">
+                                    <label for="ingredient_0">Ingredient</label>
+                                    <select id="ingredient_0" class="form-control custom-select"
+                                        style="width: 100%; height:36px;" required>
+                                        <option>Select</option>
+                                        {% for ingredient_item in ingredients %}
+                                        <option value="ingredient_item.id}}">{{ingredient_item.ingredient_name}} in
+                                            ({{ingredient_item.measuring_unit}})</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label for="quantity_0" class="control-label">Quantity</label>
+                                    <input type="text" name="quantity" class="form-control" id="quantity_0" required />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-4 px-4">
+                            <div class="col">
+                                <button class="btn btn-info waves-effect float-left" onclick="addNewRow(this)">
+                                    <i class="mdi mdi-plus"></i>Add new row
+                                </button>
+                                <button class="btn btn-success waves-effect float-right" data-dismiss="modal"
+                                    onclick="saveNewFoodMenu(this)">
+                                    <i class="mdi mdi-content-save-all"></i> Save</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.modal content -->
+</div>
+
+<!-- Add a new Ingredient to existing menu -->
+<!--Add new Menu Item button modal content -->
+<div id="add_new_ingredient_to_existing_menu" class="modal" tabindex="-1" role="dialog" aria-labelledby="vcenter"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h3 class="modal-title font-weight-bold" id="vcenter">
+                    Add a new Ingredient</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body pb-0">
+                <div class="card pb-0">
+                    <div class="card-body mb-0 pb-0" id="add_new_ingredient_body">
+
+                        <!-- Add ingredients form body -->
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal content -->
+
+{% block custom_js %}
+<!-- For Adding a new menu Item -->
+<script>
+    function verifyFields(count) {
+        let food_item_name = $('#food_item_name').val();
+        let food_item_number = $('#food_item_number').val();
+
+        if (food_item_name.trim().length >= 3 && food_item_number.trim().length > 0) {
+            // console.log("Correct");
+        } else {
+            alert("Food Item Name and Item number can't be empty.");
+            return false;
+        }
+        for (let i = 0; i < count; i++) {
+            let newIngredientData = $(`#ingredient_${i}`).val();
+            let newQuantityData = $(`#quantity_${i}`).val()
+            if (newIngredientData.trim().length > 0 && newQuantityData.trim().length > 0) {
+                // console.log("Correct");
+            } else {
+                // alert("Food Item Name and Item number can't be empty.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    var addRowClickCount = 1;
+
+    function addNewRow(item) {
+
+        let is_field_correct = verifyFields(addRowClickCount);
+
+        if (!is_field_correct) {
+            alert("fields can't be empty");
+            return;
+        }
+
+        // console.log(`item: `, item);
+        var addNewItemBody = $('#add_new_food_item_body');
+
+        addNewItemBody.append(
+            `
+            <div class="row my-2">
+                <div class="col-6">
+                    <label for="ingredient_${addRowClickCount}">Ingredient</label>
+                    <select id="ingredient_${addRowClickCount}" class="form-control custom-select"
+                        style="width: 100%; height:36px;" required>
+                        <option>Select</option>
+                        {% for ingredient_item in ingredients %}
+                        <option value="ingredient_item.id}}">{{ingredient_item.ingredient_name}} in
+                            ({{ingredient_item.measuring_unit}})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <label for="quantity_${addRowClickCount}" class="control-label">Quantity</label>
+                    <input type="text" name="quantity" class="form-control" id="quantity_${addRowClickCount}" required />
+                </div>
+            </div>
+            `
+        );
+        // console.log(`addRowClickCount: `, addRowClickCount);
+        addRowClickCount++;
+    }
+
+    function saveNewFoodMenu(item) {
+        let is_field_correct = verifyFields(addRowClickCount);
+
+        if (!is_field_correct) {
+            alert("fields can't be empty");
+            return;
+        }
+        // console.log(`item: `, item);
+        // console.log(`addRowClickCount`, addRowClickCount);
+        const item_name = $('#food_item_name').val();
+        const item_number = $('#food_item_number').val();
+        var ingredient_list = []
+        for (let i = 0; i < addRowClickCount; i++) {
+            data = {
+                "ingridient_id": $(`#ingredient_${i}`).val(),
+                "quantity": $(`#quantity_${i}`).val(),
+            }
+            ingredient_list.push(data);
+        }
+        // console.log(`ingredient_list: `, ingredient_list);
+        $('#cover-spin').show(0);
+        const url = '/recipes/';
+        fetch(url, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'aplication/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                "item_name": item_name,
+                "item_number": item_number,
+                "ingredient_list": ingredient_list,
+            }),
+        }).then(response => {
+            $('#cover-spin').hide(0);
+            // if (response.redirected) {
+            //     window.location.href = response.url;
+            // }
+            return response.json()
+        }).then(data => {
+            // console.log(`data`, data);
+            alert(data.msg)
+        }).catch(function (err) {
+            console.log(err);
+            // console.info(err + " url: " + url);
+        });
+    }
+</script>
+{% endblock custom_js %}

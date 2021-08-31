@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}">
+
+    {% block title %}
+    {% endblock title %}
+
+
+    <!-- Data atble css -->
+    <link href="{% static 'assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css' %}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="{% static 'assets/extra-libs/datatables.net-bs4/css/responsive.dataTables.min.css' %}">
+
+
+
+    <!-- needed css -->
+    <link href="{% static 'dist/css/style.min.css' %}" type="text/css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/libs/select2/dist/css/select2.min.css' %}">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+    <style>
+        #cover-spin {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #cover-spin::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 48%;
+            top: 40%;
+            width: 40px;
+            height: 40px;
+            border-style: solid;
+            border-color: black;
+            border-top-color: transparent;
+            border-width: 4px;
+            border-radius: 50%;
+            -webkit-animation: spin .8s linear infinite;
+            animation: spin .8s linear infinite;
+        }
+
+        #cover-spin {
+            position: fixed;
+            width: 100%;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+            from {
+                -webkit-transform: rotate(0deg);
+            }
+
+            to {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #cover-spin::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 48%;
+            top: 40%;
+            width: 40px;
+            height: 40px;
+            border-style: solid;
+            border-color: black;
+            border-top-color: transparent;
+            border-width: 4px;
+            border-radius: 50%;
+            -webkit-animation: spin .8s linear infinite;
+            animation: spin .8s linear infinite;
+        }
+    </style>
+
+    {% block custom_css %}
+    {% endblock custom_css %}
+
+</head>
+
+<body>
+
+
+    <div id="main-wrapper">
+        <div id="cover-spin"></div>
+
+        <!-- Topbar header - style you can find in pages.scss -->
+        {% include 'navbar/top_bar.html' %}
+        <!-- End Topbar header -->
+
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        {% include 'navbar/left_asidbar.html' %}
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+
+
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+
+            <!-- Bread crumb and right sidebar toggle -->
+            <div class="page-breadcrumb bg-light">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-xs-12 align-self-center">
+                        <h5 class="font-medium text-uppercase mb-0">
+                            {% block breadcrumb_heading %}
+
+                            {% endblock breadcrumb_heading %}
+                        </h5>
+                    </div>
+
+                    <div class="col-lg-9 col-md-8 col-xs-12 align-self-center">
+
+                        <nav aria-label="breadcrumb" class="mt-2 float-md-right float-left">
+                            <ol class="breadcrumb mb-0 justify-content-end p-0 bg-light">
+                                <li class="breadcrumb-item">
+                                    <a href="/">Home</a>
+                                </li>
+
+                                {% block breadcrumb %}
+
+                                {% endblock breadcrumb %}
+
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <!-- End Bread crumb and right sidebar toggle -->
+
+            <!-- Container fluid  -->
+            <div class="page-content container-fluid">
+
+                {% block page_content %}
+
+                {% endblock page_content %}
+
+            </div>
+            <!-- End Container fluid  -->
+
+
+
+        </div>
+        <!-- End Page wrapper  -->
+
+    </div>
+    <!-- End Wrapper -->
+
+
+
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+
+
+    <script src="{% static 'assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- apps -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <script src="{% static 'dist/js/app.init.mini-sidebar.js' %}"></script>
+    <!-- <script src="{#% static ' dist/js/app-style-switcher.js' %}"></script> -->
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="{% static 'assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js' %}"></script>
+    <script src="{% static 'assets/extra-libs/sparkline/sparkline.js' %}"></script>
+    <!--Wave Effects -->
+    <script src="{% static 'dist/js/waves.js' %}"></script>
+    <!--Menu sidebar -->
+    <script src="{% static 'dist/js/sidebarmenu.js' %}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'dist/js/custom.min.js' %}"></script>
+    <!-- This Page JS -->
+
+    <script src="{% static 'assets/libs/select2/dist/js/select2.full.min.js' %}"></script>
+    <script src="{% static 'assets/libs/select2/dist/js/select2.min.js' %}"></script>
+    <script src="{% static 'dist/js/pages/forms/select2/select2.init.js' %}"></script>
+
+    <!-- Data table cdns -->
+    <script src="{% static 'assets/extra-libs/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'assets/extra-libs/datatables.net-bs4/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'dist/js/pages/datatable/datatable-basic.init.js' %}"></script>
+
+    <!-- For advance export -->
+    <!-- <script src="{#% static 'dist/js/pages/datatable/datatable-advanced.init.js' %}"></script> -->
+
+    {% block custom_js %}
+    {% endblock custom_js %}
+</body>
+
+</html>

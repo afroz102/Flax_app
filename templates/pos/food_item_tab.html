@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+<title>Dashboard | Items</title>
+{% endblock title %}
+
+{% block breadcrumb_heading %}
+Items List
+{% endblock breadcrumb_heading %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item">
+    <a href="#">Items</a>
+</li>
+{% endblock breadcrumb %}
+
+{% block page_content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs customtab" role="tablist">
+                <li class="nav-item">
+                    <!-- data-toggle="tab" href="#items" role="tab" -->
+                    <a href="{% url 'pos:items_pos' %}" class="nav-link active">
+                        <span class="hidden-sm-up">
+                            <i class="ti-home"></i>
+                        </span>
+                        <span class="hidden-xs-down">Items</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- data-toggle="tab" href="#ingredients" role="tab" -->
+                    <a href="{% url 'pos:ingredients_pos' %}" class="nav-link">
+                        <span class="hidden-sm-up">
+                            <i class="ti-user"></i>
+                        </span>
+                        <span class="hidden-xs-down">Ingredients</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="home2" role="tabpanel">
+                    <div class="overflow-auto">
+
+
+                        <div class="row">
+                            <div class="col-12">
+
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                            <div class="col-3">
+                                                <form>
+                                                    <div class="form-group mb-4">
+                                                        <label class="mr-sm-2" for="outlet_options">Outlets</label>
+                                                        <select class="custom-select mr-sm-2" id="outlet_options">
+                                                            {% if store_filter == 'A' %}
+                                                            <option selected value="A">All</option>
+                                                            {% else %}
+                                                            <option value="A">All</option>
+                                                            {% endif %}
+
+                                                            {% if store_filter == 'TM' %}
+                                                            <option value="TM" selected>Todi Mills</option>
+                                                            {% else %}
+                                                            <option value="TM">Todi Mills</option>
+                                                            {% endif %}
+
+                                                            {% if store_filter == 'P' %}
+                                                            <option value="P" selected>Powai</option>
+                                                            {% else %}
+                                                            <option value="P">Powai</option>
+                                                            {% endif %}
+
+                                                            {% if store_filter == 'B' %}
+                                                            <option value="B" selected>Bandra</option>
+                                                            {% else %}
+                                                            <option value="B">Bandra</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <div class="col-3">
+                                                <form class="mb-4">
+                                                    <div class="form-group">
+                                                        <label for="date_from">Choose Date from</label>
+                                                        <input type="date" name="date_from" id="date_from"
+                                                            value="{{start_date_filter}}" class="form-control">
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <div class="col-3">
+                                                <form class="mb-4">
+                                                    <div class="form-group">
+                                                        <label for="date_to">Choose date to</label>
+                                                        <input type="date" name="date_to" id="date_to"
+                                                            value="{{end_date_filter}}" class="form-control">
+                                                    </div>
+                                                </form>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group my-4">
+                                                    <button class="btn btn-primary mt-1 p-2"
+                                                        id="filter_items_result_btn">Filter
+                                                        Search</button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="card-body flex-nowrap">
+                            {% if final_list %}
+                            <table class="table table-striped text-center" id="food_item_table_config">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 2rem;">Item</th>
+                                        <th style="min-width: 10rem;">Item Name</th>
+                                        {% for date_column in dateList %}
+                                        <th style="min-width: 5.2rem; font-size: 10px;">{{date_column}}</th>
+                                        {% endfor %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for orderItem in final_list %}
+                                    <tr>
+                                        <td>{{orderItem.0}}</td>
+                                        <td style="min-width: 10rem;">{{orderItem.1}}</td>
+                                        {% for qty in orderItem.2 %}
+                                        <td style="min-width: 5.2rem;">
+                                            {{qty}}
+                                        </td>
+                                        {% endfor %}
+                                    </tr>
+                                    {% endfor %}
+
+                                </tbody>
+                            </table>
+                            {% else %}
+                            <h2 class="text-center">No data to show. Choose a valid filter.</h2>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </div>
+    </div>
+    <!-- Column -->
+</div>
+
+{% endblock page_content %}
+
+{% block custom_js %}
+<script>
+    $('#filter_items_result_btn').on('click', function () {
+        // console.log("Helloo");
+        $('#cover-spin').show(0);
+        let store = $('#outlet_options').val();
+        let start_date = $('#date_from').val();
+        let end_date = $('#date_to').val();
+        // console.log(`${store}>>>>>${(start_date).split('-')}>>>${(end_date).split('-')}`);
+        const query = `/pos/items/?store=${store}&start_date=${start_date}&end_date=${end_date}/`
+        window.location.href = query;
+        // $('#cover-spin').hide(0);
+    });
+</script>
+{% endblock custom_js %}
