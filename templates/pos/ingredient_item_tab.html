@@ -128,19 +128,19 @@ Ingredients List
                                         <th style="min-width: 4rem;">Store</th>
                                         <th style="min-width: 4rem;">Average</th>
                                         {% for date_column in dateList %}
-                                        <th style="min-width: 5.2rem; font-size: 10px;">{{date_column}}</th>
+                                        <th style="min-width: 5.2rem; font-size: 10px;">{{ date_column }}</th>
                                         {% endfor %}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for ingredientItem in ingredient_list %}
                                     <tr>
-                                        <td>{{ingredientItem.1}}</td>
-                                        <td>{{ingredientItem.2}}</td>
-                                        <td>None</td>
+                                        <td>{{ ingredientItem.1 }}({{ ingredientItem.5 }})</td>
+                                        <td>{{ ingredientItem.2 }}</td>
+                                        <td>{{ ingredientItem.4|floatformat:0 }}</td>
                                         {% for qty in ingredientItem.3 %}
                                         <td style="min-width: 5.2rem;">
-                                            {{qty}}
+                                            {{ qty }}
                                         </td>
                                         {% endfor %}
                                     </tr>

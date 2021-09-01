@@ -22,7 +22,17 @@ from .models import (
 )
 
 
-# Helper function
+# Helper function1
+def findAverage(listItem):
+    sum = 0
+    for item in listItem:
+        sum += item
+    avg = sum/(len(listItem))
+    return avg
+
+# Helper function2
+
+
 def dateListSeperator(start_date_filter, end_date_filter):
     # TODO--Convert all date related operations to a seperate funcion
     start_date = datetime.date.fromisoformat(start_date_filter)
@@ -62,6 +72,7 @@ class HomeView(LoginRequiredMixin, View):
 # Food Item(menu item recipe) Point of sell data representation
 class FoodItemPOSView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
+        t1 = time.perf_counter()
         start_date_filter = self.request.GET.get('start_date')
         end_date_filter = self.request.GET.get('end_date')
         store_filter = self.request.GET.get('store')
@@ -89,11 +100,11 @@ class FoodItemPOSView(LoginRequiredMixin, View):
         count_week = dateListArr[0]
         # print(dateList)
 
-        # posData = POSData.objects.all()
-        x = POSData.objects.all()
-        posData = []
-        for i in range(10):
-            posData.append(x[i])
+        posData = POSData.objects.all()
+        # x = POSData.objects.all()
+        # posData = []
+        # for i in range(200):
+        #     posData.append(x[i])
 
         prevItemNumber = None
         final_list = []
@@ -112,27 +123,40 @@ class FoodItemPOSView(LoginRequiredMixin, View):
 
             # list, size of count_week, initialize with 0
             valuesObjList = [0]*count_week
-            # index to place in valueObjList
-            noOfDayIndex = math.ceil(
+
+            # index of valueObjList to insert quantity of item
+            noOfWeekIndex = math.ceil(
                 ((ordered_date - start_date).days + 1)/7) - 1
 
+            avg_qty = 0
             # first case at index 0
             if prevItemNumber is None:
                 final_list.append(
-                    [currItemNumber, currItemName, valuesObjList])
+                    [currItemNumber, currItemName, valuesObjList, avg_qty])
 
-                final_list[count][2][noOfDayIndex] += item_qty
+                final_list[count][2][noOfWeekIndex] += item_qty
 
                 prevItemNumber = currItemNumber
+
             elif currItemNumber == prevItemNumber:
-                final_list[count][2][noOfDayIndex] += item_qty
+                final_list[count][2][noOfWeekIndex] += item_qty
+
                 prevItemNumber = currItemNumber
             else:
                 count += 1
                 final_list.append(
-                    [currItemNumber, currItemName, valuesObjList])
-                final_list[count][2][noOfDayIndex] += item_qty
+                    [currItemNumber, currItemName, valuesObjList, avg_qty])
+                final_list[count][2][noOfWeekIndex] += item_qty
+
                 prevItemNumber = currItemNumber
+        # Finding average for each row
+        for i in range(len(final_list)):
+            cur_list = final_list[i][2]
+            avg = findAverage(cur_list)
+            final_list[i][3] = avg
+
+        t2 = time.perf_counter()
+        print(f'Finished in {t2-t1} seconds')
         context = {
             "store_filter": store_filter,
             "start_date_filter": start_date_filter,
@@ -147,6 +171,8 @@ class FoodItemPOSView(LoginRequiredMixin, View):
 # Ingredient Point of sell data representation
 class IngredientPOSView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
+        t1 = time.perf_counter()
+
         start_date_filter = self.request.GET.get('start_date')
         end_date_filter = self.request.GET.get('end_date')
         store_filter = self.request.GET.get('store')
@@ -177,8 +203,10 @@ class IngredientPOSView(LoginRequiredMixin, View):
 
         # y = POSIngredientData.objects.all()
         # posIngredientData = []
-        # for i in range(10):
+        # for i in range(200):
         #     posIngredientData.append(y[i])
+
+        # print("store_name: ", posIngredientData[0].get_store_display())
 
         dateListArr = dateListSeperator(start_date_filter, end_date_filter)
         # print(dateList)
@@ -195,48 +223,63 @@ class IngredientPOSView(LoginRequiredMixin, View):
 
         for ingredientItem in posIngredientData:
             store = ingredientItem.store
+            store_name = ingredientItem.get_store_display()
 
             if store_filter and store_filter != "" and store_filter != 'A':
                 if store_filter != store:
                     continue
 
             currIngredientName = ingredientItem.ingredient.ingredient_name
+            ingredient_unit = ingredientItem.ingredient.measuring_unit
             currIngredientPk = ingredientItem.ingredient.pk
             ordered_date = ingredientItem.order_date
             ingredient_qty = ingredientItem.quantity
 
             valuesObjList = [0]*count_week
             # index to place in valueObjList
-            noOfDayIndex = math.ceil(
+            noOfWeekIndex = math.ceil(
                 ((ordered_date - start_date).days + 1)/7) - 1
 
+            avg_qty = 0
             # first case at index 0
             if prevIngredientPk is None:
                 ingredient_list.append([
                     currIngredientPk,
                     currIngredientName,
-                    store,
-                    valuesObjList
+                    store_name,
+                    valuesObjList,
+                    avg_qty,
+                    ingredient_unit,
                 ])
 
-                ingredient_list[count_x][3][noOfDayIndex] += ingredient_qty
+                ingredient_list[count_x][3][noOfWeekIndex] += ingredient_qty
 
                 prevIngredientPk = currIngredientPk
             elif currIngredientPk == prevIngredientPk:
-                ingredient_list[count_x][3][noOfDayIndex] += ingredient_qty
+                ingredient_list[count_x][3][noOfWeekIndex] += ingredient_qty
                 prevIngredientPk = currIngredientPk
             else:
                 count_x += 1
                 ingredient_list.append([
                     currIngredientPk,
                     currIngredientName,
-                    store,
-                    valuesObjList
+                    store_name,
+                    valuesObjList,
+                    avg_qty,
+                    ingredient_unit
                 ])
-                ingredient_list[count_x][3][noOfDayIndex] += ingredient_qty
+                ingredient_list[count_x][3][noOfWeekIndex] += ingredient_qty
                 prevIngredientPk = currIngredientPk
         # print("ingredient_list: ", ingredient_list)
+        t3 = time.perf_counter()
+        print(f'Finished in {t3-t1} seconds')
+        # Finding average for each row
+        for i in range(len(ingredient_list)):
+            avg = findAverage(ingredient_list[i][3])
+            ingredient_list[i][4] = avg
 
+        t2 = time.perf_counter()
+        print(f'Finished in {t2-t1} seconds')
         context = {
             "store_filter": store_filter,
             "start_date_filter": start_date_filter,

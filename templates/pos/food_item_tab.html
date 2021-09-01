@@ -47,7 +47,7 @@ Items List
                 <div class="tab-pane active" id="home2" role="tabpanel">
                     <div class="overflow-auto">
 
-
+                        <!-- Filter row -->
                         <div class="row">
                             <div class="col-12">
 
@@ -129,6 +129,7 @@ Items List
                                     <tr>
                                         <th style="width: 2rem;">Item</th>
                                         <th style="min-width: 10rem;">Item Name</th>
+                                        <th style="min-width: 5rem;">Average</th>
                                         {% for date_column in dateList %}
                                         <th style="min-width: 5.2rem; font-size: 10px;">{{date_column}}</th>
                                         {% endfor %}
@@ -138,10 +139,11 @@ Items List
                                     {% for orderItem in final_list %}
                                     <tr>
                                         <td>{{orderItem.0}}</td>
-                                        <td style="min-width: 10rem;">{{orderItem.1}}</td>
+                                        <td style="min-width: 10rem;">{{ orderItem.1 }}</td>
+                                        <td>{{ orderItem.3|floatformat:0 }}</td>
                                         {% for qty in orderItem.2 %}
                                         <td style="min-width: 5.2rem;">
-                                            {{qty}}
+                                            {{ qty }}
                                         </td>
                                         {% endfor %}
                                     </tr>
